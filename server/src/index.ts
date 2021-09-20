@@ -1,17 +1,42 @@
 import express from 'express';
 import { ApolloServer, gql } from 'apollo-server-express';
 
+import { notes } from './stubs/notes';
+
 const PORT = process.env.PORT || 4000;
 
 const typeDefs = gql`
+  type Note {
+    id: ID!
+    content: String!
+    author: String!
+  }
   type Query {
     hello: String
+    notes: [Note!]!
+    note(id: ID!): Note!
+  }
+  type Mutation {
+    newNote(content: String!): Note!
   }
 `;
 
 const resolvers = {
   Query: {
     hello: () => 'Hello apollo server',
+    notes: () => notes,
+    note: (_: any, args: {id: string}) => notes.find((note) => note.id === args.id),
+  },
+  Mutation: {
+    newNote: (parent: any, args: {content: string}) => {
+      const note = {
+        id: String(notes.length + 1),
+        content: args.content,
+        author: 'Maxim Frolov',
+      };
+      notes.push(note);
+      return note;
+    },
   },
 };
 
@@ -34,4 +59,4 @@ async function start() {
   }
 }
 
-start();
+start().then();
