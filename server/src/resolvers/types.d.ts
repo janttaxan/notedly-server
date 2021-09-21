@@ -1,6 +1,7 @@
 import { ApolloContext } from '../index';
 
-type Resolver<ArgsType = {}> = (parent: any, args: ArgsType, context: ApolloContext) => Promise<unknown>;
+type Resolver<ArgsType = {}, ReturnType = unknown> =
+  (parent: any, args: ArgsType, context: ApolloContext) => Promise<ReturnType>;
 
 export interface Query {
   notes: Resolver;
@@ -9,4 +10,6 @@ export interface Query {
 
 export interface Mutation {
   newNote: Resolver<{content: string}>;
+  updateNote: Resolver<{id: string, content: string}>;
+  deleteNote: Resolver<{id: string}, boolean>;
 }
