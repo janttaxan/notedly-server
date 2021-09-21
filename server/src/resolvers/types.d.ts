@@ -12,4 +12,6 @@ export interface Mutation {
   newNote: Resolver<{content: string}>;
   updateNote: Resolver<{id: string, content: string}>;
   deleteNote: Resolver<{id: string}, boolean>;
+  signUp: Resolver<{username: string, email: string, password: string}, string>;
+  signIn: Resolver<{username?: string, email?: string, password: string}, string>;
 }

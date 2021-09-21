@@ -6,33 +6,35 @@ import { connectToDb } from './utils/db';
 import { Models, models } from './models';
 import { resolvers } from './resolvers';
 import { typeDefs } from './schema';
+import { getUser, VerifiedUser } from './utils/get-user';
 
 config();
 
 const PORT = process.env.PORT || 4000;
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI || '';
 
 const app = express();
 
 export interface ApolloContext {
   models: Models;
+  user: VerifiedUser | null;
 }
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: (): ApolloContext => {
-    // add DB models to apollo context
-    return { models };
+  context: ({ req }): ApolloContext => {
+    const token = req.headers.authorization || null;
+    const user = getUser(token);
+    // add values to apollo context
+    return { models, user };
   },
 });
 
 async function start() {
   try {
     // connect to mongoDB
-    if (MONGO_URI) {
-      await connectToDb(MONGO_URI);
-    }
+    await connectToDb(MONGO_URI);
     // run apollo server
     await server.start();
     server.applyMiddleware({ app, path: '/api' });

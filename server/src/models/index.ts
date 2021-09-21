@@ -1,12 +1,14 @@
-import { Note } from './note';
 import { Model } from 'mongoose';
 
-type ModelType = Model<unknown, {}, {}, {}>;
+import { Note, NoteType } from './note';
+import { User, UserType } from './user';
 
 export interface Models {
-  Note: ModelType;
+  Note: Model<NoteType>;
+  User: Model<UserType>;
 }
 
 export const models: Models = {
   Note: Note,
+  User: User,
 };

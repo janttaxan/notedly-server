@@ -1,6 +1,11 @@
 import { Schema, model } from 'mongoose';
 
-const schema = new Schema({
+export interface NoteType {
+  content: string;
+  author: string;
+}
+
+const schema = new Schema<NoteType>({
   content: {
     type: String,
     required: true,
@@ -10,6 +15,5 @@ const schema = new Schema({
     required: true,
   },
 }, { timestamps: true });
-// timestamps: присваивает поля createdAt и updatedAt к типу данных
 
-export const Note = model('Note', schema);
+export const Note = model<NoteType>('Note', schema);
