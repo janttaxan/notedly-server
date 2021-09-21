@@ -1,56 +1,42 @@
+import { ApolloServer } from 'apollo-server-express';
+import { config } from 'dotenv';
 import express from 'express';
-import { ApolloServer, gql } from 'apollo-server-express';
 
-import { notes } from './stubs/notes';
+import { connectToDb } from './utils/db';
+import { Models, models } from './models';
+import { resolvers } from './resolvers';
+import { typeDefs } from './schema';
+
+config();
 
 const PORT = process.env.PORT || 4000;
-
-const typeDefs = gql`
-  type Note {
-    id: ID!
-    content: String!
-    author: String!
-  }
-  type Query {
-    hello: String
-    notes: [Note!]!
-    note(id: ID!): Note!
-  }
-  type Mutation {
-    newNote(content: String!): Note!
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => 'Hello apollo server',
-    notes: () => notes,
-    note: (_: any, args: {id: string}) => notes.find((note) => note.id === args.id),
-  },
-  Mutation: {
-    newNote: (parent: any, args: {content: string}) => {
-      const note = {
-        id: String(notes.length + 1),
-        content: args.content,
-        author: 'Maxim Frolov',
-      };
-      notes.push(note);
-      return note;
-    },
-  },
-};
+const MONGO_URI = process.env.MONGO_URI;
 
 const app = express();
-const server = new ApolloServer({ typeDefs, resolvers });
+
+export interface ApolloContext {
+  models: Models;
+}
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: (): ApolloContext => {
+    // add DB models to apollo context
+    return { models };
+  },
+});
 
 async function start() {
   try {
+    // connect to mongoDB
+    if (MONGO_URI) {
+      await connectToDb(MONGO_URI);
+    }
+    // run apollo server
     await server.start();
     server.applyMiddleware({ app, path: '/api' });
-    app.get('/', (req, res) => {
-      res.send('hello express + TypeScript');
-    });
-
+    // run express
     app.listen(PORT, () => {
       console.log(`GraphQL Server running at http://localhost:${PORT}${server.graphqlPath}`);
     });
