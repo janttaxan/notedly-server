@@ -6,7 +6,9 @@ export const typeDefs = gql`
   type Note {
     id: ID!
     content: String!
-    author: String!
+    author: User!
+    favoriteCount: Int!
+    favoritedBy: [User!]
     createdAt: DateTime!
     updatedAt: DateTime!
   }
@@ -16,18 +18,23 @@ export const typeDefs = gql`
     username: String!
     email: String!
     avatar: String
-    notes: [Note!]!
+    notes: [Note]
+    favorites: [Note]!
   }
 
   type Query {
-    notes: [Note!]!
-    note(id: ID!): Note!
+    notes: [Note]!
+    note(noteId: ID!): Note!
+    users: [User!]!
+    user(username: String!): User
+    me: User!
   }
 
   type Mutation {
-    newNote(content: String!): Note!
-    updateNote(id: ID!, content: String!): Note!
-    deleteNote(id: ID!): Boolean!
+    newNote(noteContent: String!): Note!
+    updateNote(noteId: ID!, noteContent: String!): Note!
+    deleteNote(noteId: ID!): Boolean!
+    toggleFavorite(noteId: ID!): Note!
     signUp(username: String!, email: String!, password: String!): String!
     signIn(username: String, email: String, password: String!): String!
   }
