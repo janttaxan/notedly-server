@@ -6,7 +6,7 @@
   "scripts": {
     "build": "del-cli --force ./build && tsc --project ./",
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
-    "start": "npm run build && cross-env NODE_ENV=production node build/index.js"
+    "start": "cross-env NODE_ENV=production node build/index.js"
   },
   "author": "",
   "license": "ISC",
