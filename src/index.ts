@@ -15,9 +15,6 @@ config();
 
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || '';
-const URL = process.env.NODE_ENV === 'production'
-  ? 'domen'
-  : `http://localhost:${PORT}`;
 
 const app = express();
 app.use(hemlet());
@@ -49,7 +46,7 @@ async function start() {
     server.applyMiddleware({ app, path: '/api' });
     // run express
     app.listen(PORT, () => {
-      console.log(`GraphQL Server running at ${URL}${server.graphqlPath}`);
+      console.log(`GraphQL Server running at http://localhost:${PORT}${server.graphqlPath}`);
     });
   } catch (err) {
     console.log('Server error:', String(err));
