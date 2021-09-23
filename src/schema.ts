@@ -22,7 +22,14 @@ export const typeDefs = gql`
     favorites: [Note]!
   }
 
+  type NoteFeed {
+    notes: [Note]!
+    cursor: String!
+    hasNextPage: Boolean!
+  }
+
   type Query {
+    noteFeed(cursor: String, limit: Int): NoteFeed
     notes: [Note]!
     note(noteId: ID!): Note!
     users: [User!]!

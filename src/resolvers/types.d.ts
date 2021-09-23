@@ -18,6 +18,7 @@ export interface Query {
   note: Resolver<{noteId: string}>;
   users: Resolver;
   user: Resolver<{username: string}>;
+  noteFeed: Resolver<{cursor?: string, limit?: number}>;
   me: Resolver;
 }
 

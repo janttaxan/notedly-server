@@ -1,6 +1,9 @@
 import { ApolloServer } from 'apollo-server-express';
 import { config } from 'dotenv';
+import cors from 'cors';
+import depthLimit from 'graphql-depth-limit';
 import express from 'express';
+import hemlet from 'helmet';
 
 import { connectToDb } from './utils/db';
 import { Models, models } from './models';
@@ -13,10 +16,12 @@ config();
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || '';
 const URL = process.env.NODE_ENV === 'production'
-  ? 'https://notedly-inky.vercel.app'
+  ? 'domen'
   : `http://localhost:${PORT}`;
 
 const app = express();
+app.use(hemlet());
+app.use(cors());
 
 export interface ApolloContext {
   models: Models;
@@ -26,6 +31,7 @@ export interface ApolloContext {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  validationRules: [depthLimit(5)],
   context: ({ req }): ApolloContext => {
     const token = req.headers.authorization || null;
     const user = getUser(token);
