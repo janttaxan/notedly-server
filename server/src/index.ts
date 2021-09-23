@@ -12,6 +12,9 @@ config();
 
 const PORT = process.env.PORT || 4000;
 const MONGO_URI = process.env.MONGO_URI || '';
+const URL = process.env.NODE_ENV === 'production'
+  ? 'https://notedly-inky.vercel.app'
+  : `http://localhost:${PORT}`;
 
 const app = express();
 
@@ -40,7 +43,7 @@ async function start() {
     server.applyMiddleware({ app, path: '/api' });
     // run express
     app.listen(PORT, () => {
-      console.log(`GraphQL Server running at http://localhost:${PORT}${server.graphqlPath}`);
+      console.log(`GraphQL Server running at ${URL}${server.graphqlPath}`);
     });
   } catch (err) {
     console.log('Server error:', String(err));
